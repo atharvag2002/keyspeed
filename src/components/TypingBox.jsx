@@ -1,29 +1,33 @@
 import React, { useState, useEffect, useRef } from 'react';
-import './App.css'; // Your styling file
+import PropTypes from 'prop-types';
 
-const TypingBox = ({ targetText = "", onComplete }) => {
+const TypingBox = ({ targetText = "", onComplete, isHardMode }) => {
   const [typedText, setTypedText] = useState('');
   const [startTime, setStartTime] = useState(null);
   const [wpm, setWpm] = useState(0);
+  const [isComplete, setIsComplete] = useState(false);
   const inputRef = useRef(null);
 
-  // Focus input on mount and reset on new text
   useEffect(() => {
     setTypedText('');
     setStartTime(null);
     setWpm(0);
+    setIsComplete(false);
     inputRef.current?.focus();
   }, [targetText]);
 
-  // Calculate WPM
   useEffect(() => {
-    if (startTime && typedText.length === targetText.length) {
-      const timeElapsed = (Date.now() - startTime) / 60000; // minutes
-      const words = targetText.split(' ').length;
-      setWpm(Math.round(words / timeElapsed));
+    if (!startTime || isComplete) return;
+
+    if (typedText.length === targetText.length) {
+      const timeElapsed = (Date.now() - startTime) / 60000;
+      const words = targetText.trim().split(/\s+/).length;
+      const calculatedWpm = Math.round(words / timeElapsed);
+      setWpm(calculatedWpm);
+      setIsComplete(true);
       onComplete?.();
     }
-  }, [typedText, targetText, startTime, onComplete]);
+  }, [typedText, targetText, startTime, isComplete, onComplete]);
 
   const handleInputChange = (e) => {
     if (!startTime && e.target.value.length > 0) {
@@ -34,24 +38,22 @@ const TypingBox = ({ targetText = "", onComplete }) => {
 
   const renderTargetText = () => {
     if (!targetText) return <div className="placeholder">Loading text...</div>;
-    
+
     return targetText.split('').map((char, index) => {
-      let color = 'black';
+      let color = isHardMode ? '#f8f8f8' : '#333';
       let bgColor = 'transparent';
-      
+
       if (index < typedText.length) {
         if (typedText[index] === char) {
-          color = 'black';
-          bgColor = '#e6ffe6'; // Light green for correct
+          bgColor = isHardMode ? '#4a8c5e' : '#a5d6a7';
         } else {
-          color = 'red';
-          bgColor = '#ffe6e6'; // Light red for incorrect
+          bgColor = isHardMode ? '#c62828' : '#ffcdd2';
         }
       }
 
       return (
-        <span 
-          key={index} 
+        <span
+          key={index}
           style={{ color, backgroundColor: bgColor }}
           className="character"
         >
@@ -62,73 +64,31 @@ const TypingBox = ({ targetText = "", onComplete }) => {
   };
 
   return (
-    <div className="typing-container">
-      <div className="text-display">
-        {renderTargetText()}
-      </div>
+    <div className={`typing-container ${isHardMode ? 'hard' : 'easy'}`}>
+      <div className="text-display">{renderTargetText()}</div>
       <input
         type="text"
         ref={inputRef}
         value={typedText}
         onChange={handleInputChange}
         placeholder="Start typing here..."
-        className="typing-input"
-        disabled={!targetText}
+        className={`typing-input ${isHardMode ? 'hard' : 'easy'}`}
+        disabled={!targetText || isComplete}
       />
       {wpm > 0 && (
-        <div className="results">
+        <div className={`results ${isHardMode ? 'hard' : 'easy'}`}>
           <p>Your typing speed: <strong>{wpm} WPM</strong></p>
+          <p>Difficulty: <strong>{isHardMode ? 'Hard' : 'Easy'}</strong></p>
         </div>
       )}
     </div>
   );
 };
 
-const App = () => {
-  const paragraphs = [
-    "The quick brown fox jumps over the lazy dog. Pack my box with five dozen liquor jugs.",
-    "React components let you split the UI into independent, reusable pieces. useState() is a Hook for functional components.",
-    "The pursuit of knowledge is fundamental to human progress. Typing quickly and accurately is essential in today's digital world."
-  ];
-
-  const [currentParaIndex, setCurrentParaIndex] = useState(0);
-  const [completedTests, setCompletedTests] = useState([]);
-
-  const handleComplete = () => {
-    setCompletedTests(prev => [...prev, currentParaIndex]);
-  };
-
-  const nextParagraph = () => {
-    setCurrentParaIndex(prev => (prev + 1) % paragraphs.length);
-  };
-
-  return (
-    <div className="app">
-      <h1>Typing Speed Test</h1>
-      <div className="test-container">
-        <TypingBox 
-          targetText={paragraphs[currentParaIndex]} 
-          onComplete={handleComplete}
-        />
-        <div className="controls">
-          <button onClick={nextParagraph} className="next-btn">
-            Next Paragraph
-          </button>
-        </div>
-      </div>
-      
-      {completedTests.length > 0 && (
-        <div className="history">
-          <h3>Completed Tests:</h3>
-          <ul>
-            {completedTests.map((index, i) => (
-              <li key={i}>Paragraph #{index + 1}</li>
-            ))}
-          </ul>
-        </div>
-      )}
-    </div>
-  );
+TypingBox.propTypes = {
+  targetText: PropTypes.string,
+  onComplete: PropTypes.func,
+  isHardMode: PropTypes.bool
 };
 
 export default TypingBox;

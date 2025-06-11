@@ -1,114 +1,60 @@
-import React, { useState, useEffect, useRef } from 'react';
-import './App.css'; // Your styling file
-
-const TypingBox = ({ targetText = "", onComplete }) => {
-  const [typedText, setTypedText] = useState('');
-  const [startTime, setStartTime] = useState(null);
-  const [wpm, setWpm] = useState(0);
-  const inputRef = useRef(null);
-
-  // Focus input on mount and reset on new text
-  useEffect(() => {
-    setTypedText('');
-    setStartTime(null);
-    setWpm(0);
-    inputRef.current?.focus();
-  }, [targetText]);
-
-  // Calculate WPM
-  useEffect(() => {
-    if (startTime && typedText.length === targetText.length) {
-      const timeElapsed = (Date.now() - startTime) / 60000; // minutes
-      const words = targetText.trim().split(/\s+/).length;
-      setWpm(Math.round(words / timeElapsed));
-      onComplete?.();
-    }
-  }, [typedText, targetText, startTime, onComplete]);
-
-  const handleInputChange = (e) => {
-    if (!startTime && e.target.value.length > 0) {
-      setStartTime(Date.now());
-    }
-    setTypedText(e.target.value);
-  };
-
-  const renderTargetText = () => {
-    if (!targetText) return <div className="placeholder">Loading text...</div>;
-    
-    return targetText.split('').map((char, index) => {
-      let color = 'black';
-      let bgColor = 'transparent';
-      
-      if (index < typedText.length) {
-        if (typedText[index] === char) {
-          color = 'black';
-          bgColor = '#e6ffe6'; // Light green for correct
-        } else {
-          color = 'red';
-          bgColor = '#ffe6e6'; // Light red for incorrect
-        }
-      }
-
-      return (
-        <span 
-          key={index} 
-          style={{ color, backgroundColor: bgColor }}
-          className="character"
-        >
-          {char}
-        </span>
-      );
-    });
-  };
-
-  return (
-    <div className="typing-container">
-      <div className="text-display">
-        {renderTargetText()}
-      </div>
-      <input
-        type="text"
-        ref={inputRef}
-        value={typedText}
-        onChange={handleInputChange}
-        placeholder="Start typing here..."
-        className="typing-input"
-        disabled={!targetText}
-      />
-      {wpm > 0 && (
-        <div className="results">
-          <p>Your typing speed: <strong>{wpm} WPM</strong></p>
-        </div>
-      )}
-    </div>
-  );
-};
+import React, { useState } from 'react';
+import TypingBox from './components/TypingBox';
+import './App.css';
 
 const App = () => {
-  const paragraphs = [
-    "The quick brown fox jumps over the lazy dog. Pack my box with five dozen liquor jugs.",
-    "React components let you split the UI into independent, reusable pieces. useState() is a Hook for functional components.",
-    "The pursuit of knowledge is fundamental to human progress. Typing quickly and accurately is essential in today's digital world."
+  const easyParagraphs = [
+    "The quick brown fox jumps over the lazy dog.",
+    "Pack my box with five dozen liquor jugs.",
+    "How vexingly quick daft zebras jump!"
+  ];
+
+  const hardParagraphs = [
+    "The juxtaposition of quantum mechanics and classical physics creates fascinating paradoxes that challenge our understanding of reality.",
+    "Pneumonoultramicroscopicsilicovolcanoconiosis, the longest word in English, refers to a lung disease caused by inhaling very fine silicate or quartz dust.",
+    "The epistemological implications of artificial intelligence's emergent behavior remain hotly debated among cognitive scientists and philosophers alike."
   ];
 
   const [currentParaIndex, setCurrentParaIndex] = useState(0);
   const [completedTests, setCompletedTests] = useState([]);
+  const [isHardMode, setIsHardMode] = useState(false);
 
   const handleComplete = () => {
-    setCompletedTests(prev => [...prev, currentParaIndex]);
+    setCompletedTests(prev => {
+      if (prev.includes(currentParaIndex)) return prev;
+      return [...prev, currentParaIndex];
+    });
   };
 
   const nextParagraph = () => {
-    setCurrentParaIndex(prev => (prev + 1) % paragraphs.length);
+    setCurrentParaIndex(prev => (prev + 1) % currentParagraphs.length);
   };
 
+  const toggleDifficulty = () => {
+    setIsHardMode(!isHardMode);
+    setCurrentParaIndex(0); // Reset to first paragraph when changing mode
+  };
+
+  const currentParagraphs = isHardMode ? hardParagraphs : easyParagraphs;
+  const appThemeClass = isHardMode ? 'hard-theme' : 'easy-theme';
+
   return (
-    <div className="app">
+    <div className={`outer-bg ${isHardMode ? 'outer-hard' : 'outer-easy'}`}>
+    <div className={`app ${appThemeClass}`}>
       <h1>Typing Speed Test</h1>
+      <div className="difficulty-toggle">
+        <button 
+          onClick={toggleDifficulty}
+          className={`toggle-btn ${isHardMode ? 'hard' : 'easy'}`}
+        >
+          {isHardMode ? 'Hard Mode' : 'Easy Mode'}
+        </button>
+      </div>
       <div className="test-container">
-        <TypingBox 
-          targetText={paragraphs[currentParaIndex]} 
+        <TypingBox
+          targetText={currentParagraphs[currentParaIndex]}
           onComplete={handleComplete}
+          isHardMode={isHardMode}
         />
         <div className="controls">
           <button onClick={nextParagraph} className="next-btn">
@@ -116,17 +62,18 @@ const App = () => {
           </button>
         </div>
       </div>
-      
+
       {completedTests.length > 0 && (
         <div className="history">
           <h3>Completed Tests:</h3>
           <ul>
             {completedTests.map((index, i) => (
-              <li key={i}>Paragraph #{index + 1}</li>
+              <li key={i}>Paragraph #{index + 1} ({isHardMode ? 'Hard' : 'Easy'})</li>
             ))}
           </ul>
         </div>
       )}
+    </div>
     </div>
   );
 };
