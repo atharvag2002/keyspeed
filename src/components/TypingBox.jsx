@@ -25,7 +25,7 @@ const TypingBox = ({ targetText = "", onComplete, isHardMode }) => {
       const calculatedWpm = Math.round(words / timeElapsed);
       setWpm(calculatedWpm);
       setIsComplete(true);
-      onComplete?.();
+      onComplete?.(calculatedWpm);
     }
   }, [typedText, targetText, startTime, isComplete, onComplete]);
 

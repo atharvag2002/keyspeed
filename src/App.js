@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import TypingBox from './components/TypingBox';
 import './App.css';
 
@@ -16,14 +16,29 @@ const App = () => {
   ];
 
   const [currentParaIndex, setCurrentParaIndex] = useState(0);
-  const [completedTests, setCompletedTests] = useState([]);
   const [isHardMode, setIsHardMode] = useState(false);
+  const [history, setHistory] = useState([]);
 
-  const handleComplete = () => {
-    setCompletedTests(prev => {
-      if (prev.includes(currentParaIndex)) return prev;
-      return [...prev, currentParaIndex];
-    });
+  const currentParagraphs = isHardMode ? hardParagraphs : easyParagraphs;
+  const appThemeClass = isHardMode ? 'hard-theme' : 'easy-theme';
+
+  useEffect(() => {
+    const saved = localStorage.getItem('typingTestHistory');
+    if (saved) {
+      setHistory(JSON.parse(saved));
+    }
+  }, []);
+
+  const handleComplete = (wpm) => {
+    const result = {
+      paragraphNumber: currentParaIndex + 1,
+      difficulty: isHardMode ? 'Hard' : 'Easy',
+      date: new Date().toLocaleDateString(),
+      wpm
+    };
+    const updated = [...history, result];
+    setHistory(updated);
+    localStorage.setItem('typingTestHistory', JSON.stringify(updated));
   };
 
   const nextParagraph = () => {
@@ -32,48 +47,49 @@ const App = () => {
 
   const toggleDifficulty = () => {
     setIsHardMode(!isHardMode);
-    setCurrentParaIndex(0); // Reset to first paragraph when changing mode
+    setCurrentParaIndex(0);
   };
-
-  const currentParagraphs = isHardMode ? hardParagraphs : easyParagraphs;
-  const appThemeClass = isHardMode ? 'hard-theme' : 'easy-theme';
 
   return (
     <div className={`outer-bg ${isHardMode ? 'outer-hard' : 'outer-easy'}`}>
-    <div className={`app ${appThemeClass}`}>
-      <h1>Typing Speed Test</h1>
-      <div className="difficulty-toggle">
-        <button 
-          onClick={toggleDifficulty}
-          className={`toggle-btn ${isHardMode ? 'hard' : 'easy'}`}
-        >
-          {isHardMode ? 'Hard Mode' : 'Easy Mode'}
-        </button>
-      </div>
-      <div className="test-container">
-        <TypingBox
-          targetText={currentParagraphs[currentParaIndex]}
-          onComplete={handleComplete}
-          isHardMode={isHardMode}
-        />
-        <div className="controls">
-          <button onClick={nextParagraph} className="next-btn">
-            Next Paragraph
+      <div className={`app ${appThemeClass}`}>
+        <h1>Typing Speed Test</h1>
+        <div className="difficulty-toggle">
+          <button 
+            onClick={toggleDifficulty}
+            className={`toggle-btn ${isHardMode ? 'hard' : 'easy'}`}
+          >
+            {isHardMode ? 'Hard Mode' : 'Easy Mode'}
           </button>
         </div>
-      </div>
-
-      {completedTests.length > 0 && (
-        <div className="history">
-          <h3>Completed Tests:</h3>
-          <ul>
-            {completedTests.map((index, i) => (
-              <li key={i}>Paragraph #{index + 1} ({isHardMode ? 'Hard' : 'Easy'})</li>
-            ))}
-          </ul>
+        <div className="test-container">
+          <TypingBox
+            targetText={currentParagraphs[currentParaIndex]}
+            onComplete={handleComplete}
+            isHardMode={isHardMode}
+          />
+          <div className="controls">
+            <button onClick={nextParagraph} className="next-btn">
+              Next Paragraph
+            </button>
+          </div>
         </div>
-      )}
-    </div>
+
+        <div className="history">
+          <h3>Test History:</h3>
+          {history.length === 0 ? (
+            <p className="placeholder">No history found</p>
+          ) : (
+            <ul>
+              {history.map((test, idx) => (
+                <li key={idx}>
+                  Para #{test.paragraphNumber} | Mode: {test.difficulty} | WPM: {test.wpm} | {test.date}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
