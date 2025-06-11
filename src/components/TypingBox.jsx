@@ -19,7 +19,7 @@ const TypingBox = ({ targetText = "", onComplete }) => {
   useEffect(() => {
     if (startTime && typedText.length === targetText.length) {
       const timeElapsed = (Date.now() - startTime) / 60000; // minutes
-      const words = targetText.trim().split(/\s+/).length;
+      const words = targetText.split(' ').length;
       setWpm(Math.round(words / timeElapsed));
       onComplete?.();
     }
@@ -131,4 +131,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default TypingBox;
