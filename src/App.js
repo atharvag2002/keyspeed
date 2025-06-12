@@ -12,12 +12,13 @@ const App = () => {
 ];
 
 const hardParagraphs = [
-  "Though the clock ticked steadily, his thoughts ran wild, looping through memories and imagined futures he couldn’t escape.",
-  "In an age of constant distraction, moments of stillness feel almost rebellious—yet that silence is where the real clarity often lives.",
-  "As curiosity outpaced fear, she dove deeper into the unknown, chasing questions that had no promise of answers.",
-  "The rustling leaves whispered secrets of the past, echoing stories long forgotten by even the oldest trees in the forest.",
-  "What we define as intelligence isn’t just speed or memory, but the ability to adapt, reflect, and reshape our understanding when challenged."
+  "Epistemological debates surrounding machine consciousness often hinge not only on observable behavior but also on elusive constructs like qualia and subjective intentionality, making definitive conclusions inherently slippery.",
+  "As quantum entanglement challenges classical notions of locality, physicists are increasingly confronted with metaphysical implications that blur the lines between determinism and probabilistic chaos.",
+  "In a world where language models mimic human articulation with unnerving accuracy, the boundaries between authentic cognition and algorithmic illusion become perilously ambiguous, prompting urgent philosophical inquiry.",
+  "The recursive self-modification of artificial intelligence raises unprecedented ethical concerns about alignment, autonomy, and the irrevocability of synthetic evolution once it surpasses human oversight.",
+  "Neuroscience’s reductionist attempts to localize consciousness within cortical substrates ignore the emergent properties of networked brain systems, where the whole is demonstrably more than the sum of its biological parts."
 ];
+
 
 
   const [currentParaIndex, setCurrentParaIndex] = useState(0);
