@@ -4,16 +4,21 @@ import './App.css';
 
 const App = () => {
   const easyParagraphs = [
-    "The quick brown fox jumps over the lazy dog.",
-    "Pack my box with five dozen liquor jugs.",
-    "How vexingly quick daft zebras jump!"
-  ];
+  "Raindrops tapped gently on the window as the tea steamed beside her favorite book.",
+  "She found an old camera in the attic and wondered about the stories it once captured.",
+  "The dog wagged its tail wildly every time the door creaked open.",
+  "He planted a seed, not knowing it would someday become the tallest tree in the garden.",
+  "On Sunday mornings, the smell of pancakes filled the tiny kitchen with warmth."
+];
 
-  const hardParagraphs = [
-    "The juxtaposition of quantum mechanics and classical physics creates fascinating paradoxes that challenge our understanding of reality.",
-    "Pneumonoultramicroscopicsilicovolcanoconiosis, the longest word in English, refers to a lung disease caused by inhaling very fine silicate or quartz dust.",
-    "The epistemological implications of artificial intelligence's emergent behavior remain hotly debated among cognitive scientists and philosophers alike."
-  ];
+const hardParagraphs = [
+  "Though the clock ticked steadily, his thoughts ran wild, looping through memories and imagined futures he couldn’t escape.",
+  "In an age of constant distraction, moments of stillness feel almost rebellious—yet that silence is where the real clarity often lives.",
+  "As curiosity outpaced fear, she dove deeper into the unknown, chasing questions that had no promise of answers.",
+  "The rustling leaves whispered secrets of the past, echoing stories long forgotten by even the oldest trees in the forest.",
+  "What we define as intelligence isn’t just speed or memory, but the ability to adapt, reflect, and reshape our understanding when challenged."
+];
+
 
   const [currentParaIndex, setCurrentParaIndex] = useState(0);
   const [isHardMode, setIsHardMode] = useState(false);
@@ -40,7 +45,7 @@ const App = () => {
       }),
       wpm
     };
-    const updated = [...history, result];
+    const updated = [result, ...history];
     setHistory(updated);
     localStorage.setItem('typingTestHistory', JSON.stringify(updated));
   };
@@ -58,14 +63,18 @@ const App = () => {
     <div className={`outer-bg ${isHardMode ? 'outer-hard' : 'outer-easy'}`}>
       <div className={`app ${appThemeClass}`}>
         <h1>KeySpeed</h1>
-        <div className="difficulty-toggle">
+
+        <div className="difficulty-toggle-switch">
           <button 
+            className={`switch-btn ${isHardMode ? 'right' : 'left'}`} 
             onClick={toggleDifficulty}
-            className={`toggle-btn ${isHardMode ? 'hard' : 'easy'}`}
           >
-            {isHardMode ? 'Hard Mode' : 'Easy Mode'}
+            <span className="option easy">Easy</span>
+            <span className="option hard">Hard</span>
+            <div className="slider" />
           </button>
         </div>
+
         <div className="test-container">
           <TypingBox
             targetText={currentParagraphs[currentParaIndex]}
