@@ -33,7 +33,11 @@ const App = () => {
     const result = {
       paragraphNumber: currentParaIndex + 1,
       difficulty: isHardMode ? 'Hard' : 'Easy',
-      date: new Date().toLocaleDateString(),
+      date: new Date().toLocaleDateString('en-US', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric'
+      }),
       wpm
     };
     const updated = [...history, result];
@@ -53,7 +57,7 @@ const App = () => {
   return (
     <div className={`outer-bg ${isHardMode ? 'outer-hard' : 'outer-easy'}`}>
       <div className={`app ${appThemeClass}`}>
-        <h1>Typing Speed Test</h1>
+        <h1>KeySpeed</h1>
         <div className="difficulty-toggle">
           <button 
             onClick={toggleDifficulty}
@@ -82,8 +86,13 @@ const App = () => {
           ) : (
             <ul>
               {history.map((test, idx) => (
-                <li key={idx}>
-                  Para #{test.paragraphNumber} | Mode: {test.difficulty} | WPM: {test.wpm} | {test.date}
+                <li key={idx} className="history-item">
+                  <div className="history-left">
+                    Para #{test.paragraphNumber} | Mode: {test.difficulty} | {test.date}
+                  </div>
+                  <div className="history-right">
+                    {test.wpm} WPM
+                  </div>
                 </li>
               ))}
             </ul>

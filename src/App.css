@@ -1,13 +1,65 @@
-/* Base Styles */
+/* App Container */
+h1 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 3.5rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  /* Default faded pastel gradient for light mode */
+  background: linear-gradient(90deg, #ffdd8d, #fbc9bb, #9ac0ff, #b8ffd2, #ffb7b7);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-stroke: 1px #bdbdbd; /* subtle border for readability */
+}
 
+/* Hard mode gradient for h1 */
+.app.hard-theme h1 {
+  background: linear-gradient(90deg, #ff9800, #f44336, #8e24aa, #2196f3, #43ea7b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-stroke: 1px #222; /* darker border for hard mode */
+}
+
+/* Toggle Button Hover Effect */
+.toggle-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.toggle-btn.easy {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.toggle-btn.hard {
+  background-color: #d32f2f;
+  color: white;
+}
+
+/* Add hover effect for both modes */
+.toggle-btn.easy:hover {
+  background-color: #388e3c;
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.15);
+}
+
+.toggle-btn.hard:hover {
+  background-color: #b71c1c;
+  box-shadow: 0 2px 8px rgba(211, 47, 47, 0.15);
+}
 .app {
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
   font-family: Arial, sans-serif;
   min-height: 100vh;
-  transition: all 0.3s ease;
-   transition: background 0.3s;
+  transition: background 0.3s;
 }
 
 /* Easy Theme */
@@ -46,7 +98,7 @@
   color: white;
 }
 
-/* Text Display */
+/* Typing Input and Display */
 .text-display {
   font-size: 1.2rem;
   line-height: 1.6;
@@ -67,10 +119,10 @@
   border: 1px solid #555;
 }
 
-/* Typing Input */
 .typing-input {
-  box-sizing: border-box;
   width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   padding: 12px;
   font-size: 1rem;
   border-radius: 4px;
@@ -136,59 +188,13 @@
   background: #1976D2;
 }
 
-/* History */
-.history {
-  margin-top: 30px;
-  padding: 15px;
-  border-radius: 4px;
-}
-
-.easy-theme .history {
-  background: #e8f5e9;
-}
-
-.hard-theme .history {
-  background: #333;
-}
-
-.placeholder {
-  color: #999;
-  font-style: italic;
-}
-
-.character {
-  display: inline-block;
-  width: 1ch;
-  height: 1.6em;
-  text-align: center;
-  vertical-align: middle;
-  border-radius: 3px;
-  transition: background-color 0.2s;
-}
-
-.outer-bg {
-  width: 100%;
-  min-height: 100vh;
-  position: absolute; /* changed from fixed */
-  top: 0;
-  left: 0;
-  z-index: -1;
-  transition: background 0.3s;
-}
-
-
-.outer-easy {
-  background: linear-gradient(120deg, #fff956 0%, #f7f8c8 100%);
-}
-
-.outer-hard {
-  background: linear-gradient(120deg, #0d0d0d 0%, #370500 100%);
-}
-
+/* History Section */
 .history {
   margin-top: 30px;
   padding: 20px;
   border-radius: 8px;
+  max-height: 300px;
+  overflow-y: auto;
   transition: background 0.3s ease;
 }
 
@@ -218,25 +224,46 @@
   margin: 0;
 }
 
-.history li {
-  padding: 10px;
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
   margin-bottom: 8px;
   border-radius: 6px;
-  background: rgba(0, 0, 0, 0.05);
-  transition: background 0.2s;
   font-weight: 500;
+  transition: background 0.2s ease;
 }
 
-.easy-theme .history li {
+.easy-theme .history-item {
   background: #f1f8e9;
   color: #33691e;
 }
 
-.hard-theme .history li {
+.hard-theme .history-item {
   background: #424242;
   color: #e0e0e0;
 }
 
-.history li:hover {
+.history-item:hover {
   transform: scale(1.02);
+}
+
+/* Background */
+.outer-bg {
+  width: 100%;
+  min-height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  transition: background 0.3s;
+}
+
+.outer-easy {
+  background: linear-gradient(120deg, #fff956 0%, #f7f8c8 100%);
+}
+
+.outer-hard {
+  background: linear-gradient(120deg, #0d0d0d 0%, #370500 100%);
 }

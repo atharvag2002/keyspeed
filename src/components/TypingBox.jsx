@@ -18,7 +18,6 @@ const TypingBox = ({ targetText = "", onComplete, isHardMode }) => {
 
   useEffect(() => {
     if (!startTime || isComplete) return;
-
     if (typedText.length === targetText.length) {
       const timeElapsed = (Date.now() - startTime) / 60000;
       const words = targetText.trim().split(/\s+/).length;
